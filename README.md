@@ -11,13 +11,11 @@ for just calculate modbus crc 16
 
 
 #include <stdio.h>
-
 int main()
 {
     unsigned short temp = 0xffff;//init temp
     unsigned short buffer = 0;
     unsigned char input[6] = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x03 };
-
     for (int i = 0; i < sizeof(input); i++)
     {
         temp = input[i] ^ temp;//XOR gate

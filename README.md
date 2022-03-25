@@ -8,32 +8,38 @@ for just calculate modbus crc 16
 
 
 
-
-
 #include <stdio.h>
-int main()
+unsigned char input[6] = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x03 };//request packet
+
+unsigned int fnxCrc(unsigned char* input, int len)
 {
-    unsigned short temp = 0xffff;//init temp
-    unsigned short buffer = 0;
-    unsigned char input[6] = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x03 };
-    for (int i = 0; i < sizeof(input); i++)
+    unsigned int temp = 0xFFFF;//init temp
+    unsigned int buffer = 0;    
+    for (int i = 0; i < len; i++)
     {
         temp = input[i] ^ temp;//XOR gate
         for (int j = 0; j < 8; j++)//for 1 byte 8 bit
         {
-            if (temp & 0x01) 
+            if (temp & 0x01)
             {
                 temp = temp >> 1;
                 temp = temp ^ 0xA001;
             }
-            else {
+            else
+            {
                 temp = temp >> 1;
             }
         }
     }
     //CRC byte position change
-    buffer = temp >> 8; 
-    buffer = buffer | (temp << 8);
-    printf("CRC: %X\n", buffer);
-    return 0;    
+    buffer = temp >> 8;
+    buffer = buffer | temp << 8 ;
+    buffer = buffer >> 8;
+    return buffer;
+}
+
+int main()
+{
+    int x = fnxCrc(input, 6);
+    printf("CRC: %X\n", x);
 }
